@@ -16,6 +16,7 @@ func migration() {
 		&model.BookContent{},
 		&model.UserBookshelf{},
 		&model.BookInfo{},
+		&model.UserNotification{},
 	)
 	if err != nil {
 		fmt.Println("err ", err)

@@ -5,8 +5,10 @@
 package conf
 
 import (
+	"context"
 	"go_novel/cache"
 	"go_novel/dao"
+	"go_novel/mq"
 	"strings"
 
 	"gopkg.in/ini.v1"
@@ -27,11 +29,17 @@ var (
 	RedisAddrstring string
 	RedisPw         string
 	RedisDbName     string
+
+	RabbitMQ         string
+	RabbitMQUser     string
+	RabbitMQPassWord string
+	RabbitMQHost     string
+	RabbitMQPort     string
 )
 
 func Init() {
 	// 本地读取环境变量
-	file, err := ini.Load("C:/Users/86131/Desktop/Project/go_project/Znovel/conf/config.ini")
+	file, err := ini.Load("C:/Users/86131/Desktop/Project/go_project/go-znovel/conf/config.ini")
 	if err != nil {
 		panic(err)
 	}
@@ -48,6 +56,23 @@ func Init() {
 	dao.Database(pathRead, PathWrite)
 
 	cache.Init()
+
+	LoadRabbitMQData(file)
+	// 连接RabbitMQ
+	pathRabbitMQ := strings.Join([]string{RabbitMQ, "://", RabbitMQUser, ":", RabbitMQPassWord, "@", RabbitMQHost, ":", RabbitMQPort, "/"}, "")
+	mq.Init(pathRabbitMQ)
+
+	// 启动消息消费者
+	go mq.StartChapterUpdateConsumer(dao.NewDBClient(context.Background()))
+
+}
+
+func LoadRabbitMQData(file *ini.File) {
+	RabbitMQ = file.Section("rabbitmq").Key("RabbitMQ").String()
+	RabbitMQUser = file.Section("rabbitmq").Key("RabbitMQUser").String()
+	RabbitMQPassWord = file.Section("rabbitmq").Key("RabbitMQPassWord").String()
+	RabbitMQHost = file.Section("rabbitmq").Key("RabbitMQHost").String()
+	RabbitMQPort = file.Section("rabbitmq").Key("RabbitMQPort").String()
 }
 
 func LoadServer(file *ini.File) {

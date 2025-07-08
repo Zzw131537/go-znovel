@@ -1,4 +1,4 @@
-package front
+package api
 
 import (
 	"context"
@@ -72,6 +72,51 @@ func AddVisitCount(ctx *gin.Context) {
 
 	if err := ctx.ShouldBind(&ba); err == nil {
 		res := ba.AddVisitCount(int64(bookID), ctx.Request.Context())
+		ctx.JSON(http.StatusOK, res)
+	} else {
+		ctx.JSON(http.StatusBadRequest, gin.H{
+			"code":  e.Error,
+			"Msg":   e.GetMsg(e.Error),
+			"Error": err.Error(),
+		})
+	}
+}
+
+func BookRecList(ctx *gin.Context) {
+	bookId := ctx.Query("book_id")
+	atoi, _ := strconv.Atoi(bookId)
+	c := int64(atoi)
+	bookService := service.BookService{}
+	if err := ctx.ShouldBind(&bookService); err == nil {
+		res := bookService.BookRecList(c, ctx)
+		ctx.JSON(http.StatusOK, res)
+	} else {
+		ctx.JSON(http.StatusBadRequest, gin.H{
+			"code":  e.Error,
+			"Msg":   e.GetMsg(e.Error),
+			"Error": err.Error(),
+		})
+	}
+}
+
+func VisitRank(ctx *gin.Context) {
+	bookService := service.BookService{}
+	if err := ctx.ShouldBind(&bookService); err == nil {
+		res := bookService.BookVisitRank(ctx.Request.Context())
+		ctx.JSON(http.StatusOK, res)
+	} else {
+		ctx.JSON(http.StatusBadRequest, gin.H{
+			"code":  e.Error,
+			"Msg":   e.GetMsg(e.Error),
+			"Error": err.Error(),
+		})
+	}
+}
+
+func NewBookRank(ctx *gin.Context) {
+	bookService := service.BookService{}
+	if err := ctx.ShouldBind(&bookService); err == nil {
+		res := bookService.BookNewRank(ctx.Request.Context())
 		ctx.JSON(http.StatusOK, res)
 	} else {
 		ctx.JSON(http.StatusBadRequest, gin.H{

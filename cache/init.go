@@ -17,7 +17,7 @@ var (
 )
 
 func Init() {
-	file, err := ini.Load("C:/Users/86131/Desktop/Project/go_project/Znovel/conf/config.ini")
+	file, err := ini.Load("C:/Users/86131/Desktop/Project/go_project/go-znovel/conf/config.ini")
 	if err != nil {
 		fmt.Println("redis config err", err)
 	}

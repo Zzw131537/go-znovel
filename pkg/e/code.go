@@ -8,6 +8,8 @@ const (
 
 	BOOK_PREFIX_KEY = "znovel:book:"
 
+	AUTHOR_PREFIX_KEY = "znovel:author:"
+
 	DefaultAesKey = "0123456789012345"
 
 	Success                    = 200
